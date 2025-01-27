@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { Category } from '@prisma/client';
 
 @Injectable()
 export class CategoriesService {
@@ -12,21 +13,18 @@ export class CategoriesService {
     });
     if (!category) {
       throw new HttpException(
-        'Something went wrong during creating category',
+        `Something went wrong during creating ${createCategoryDto.name}`,
         HttpStatus.NOT_FOUND,
       );
     }
     return category;
   }
 
-  public async findAll() {
+  public async findAll(): Promise<Category[]> {
     const categories = await this.prisma.category.findMany({});
 
     if (!categories) {
-      throw new HttpException(
-        'Something went wrong during creating category',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.NOT_FOUND);
     }
     return categories;
   }
