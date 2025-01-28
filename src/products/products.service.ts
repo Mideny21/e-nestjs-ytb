@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { MediaService } from '../media/media.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Product } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -39,12 +40,37 @@ export class ProductsService {
     return product;
   }
 
-  findAll() {
-    return `This action returns all products`;
+  public async findAll(): Promise<Product[]> {
+    const products = await this.prisma.product.findMany({
+      include: { ProductImage: { select: { url: true } } },
+    });
+    if (!products) {
+      throw new HttpException('No available product', HttpStatus.NOT_FOUND);
+    }
+    return products;
+  }
+  public async findAllByCategory(categoryId: number): Promise<Product[]> {
+    const products = await this.prisma.product.findMany({
+      where: { categoryId },
+      include: { ProductImage: { select: { url: true } } },
+    });
+    if (!products) {
+      throw new HttpException('No Product Not Found!', HttpStatus.NOT_FOUND);
+    }
+    return products;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number): Promise<Product> {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      include: { ProductImage: { select: { url: true } } },
+    });
+
+    if (!product) {
+      throw new HttpException('Product Not Found!', HttpStatus.NOT_FOUND);
+    }
+
+    return product;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {

@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   UseInterceptors,
-  UploadedFiles,
+  UploadedFiles, ParseFilePipeBuilder, HttpStatus,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+
+
+const SIZE = 2 * 1024 * 1024;
 
 @Controller('products')
 export class ProductsController {
@@ -24,7 +27,15 @@ export class ProductsController {
   )
   async create(
     @Body() createProductDto: CreateProductDto,
-    @UploadedFiles() files: { images?: Express.Multer.File[] },
+    @UploadedFiles(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: /(jpg|png)$/ })
+        .addMaxSizeValidator({ maxSize: SIZE })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    files: { images?: Express.Multer.File[] },
   ) {
     return this.productsService.create(createProductDto, files.images || []);
   }
@@ -37,6 +48,11 @@ export class ProductsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
+  }
+
+  @Get('category/:id')
+  findByCategory(@Param('id') id: string) {
+    return this.productsService.findAllByCategory(+id);
   }
 
   @Patch(':id')
