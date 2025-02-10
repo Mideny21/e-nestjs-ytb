@@ -6,6 +6,7 @@ import { User } from '@prisma/client';
 import { LoginDTO } from '../users/dto/login_dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { ActiveUserData } from './interface/active-user-data';
 
 
 @Injectable()
@@ -18,7 +19,7 @@ export class AuthService {
     return this.userService.create(createUserDto);
   }
 
-  public async login(loginDto: LoginDTO): Promise<{ accessToken: string }> {
+  public async login(loginDto: LoginDTO) {
     const user = await this.userService.findByEmail(loginDto);
 
     const passwordMatched = await bcrypt.compare(
@@ -29,10 +30,13 @@ export class AuthService {
     if (passwordMatched) {
       delete user.password;
       const payload = {
-        sub: user.id,
+        userId: user.id,
         email: user.email,
+      } as ActiveUserData;
+      return {
+        user: user,
+        accessToken: this.jwtService.sign(payload),
       };
-      return { accessToken: this.jwtService.sign(payload) };
     } else {
       throw new UnauthorizedException('Password does not match');
     }

@@ -33,7 +33,7 @@ export class ProductsService {
         },
       },
       include: {
-        ProductImage: true, // To include created images in the response
+        ProductImage: true,
       },
     });
 
