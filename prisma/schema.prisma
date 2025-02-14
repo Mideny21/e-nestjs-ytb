@@ -14,13 +14,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String   @db.VarChar(200)
-  name      String   @db.VarChar(200)
-  address   String   @db.VarChar(200)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String     @db.VarChar(200)
+  name      String     @db.VarChar(200)
+  address   String     @db.VarChar(200)
+  role      USER_ROLE? @default(DEFAULT)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Order     Order[]
 }
 
 model Product {
@@ -34,6 +36,7 @@ model Product {
   createdAt    DateTime       @default(now())
   updateAt     DateTime       @updatedAt
   ProductImage ProductImage[]
+  OrderItem    OrderItem[]
 }
 
 model ProductImage {
@@ -51,4 +54,42 @@ model Category {
   createdAt DateTime  @default(now())
   updateAt  DateTime  @updatedAt
   Product   Product[]
+}
+
+model Order {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  user       User         @relation(fields: [userId], references: [id])
+  status     ORDER_STATUS @default(PENDING)
+  createdAt  DateTime     @default(now())
+  updateAt   DateTime     @updatedAt
+  totalPrice Float?
+  orderItems OrderItem[]
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  name      String
+  price     String?
+  total     String?
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+enum ORDER_STATUS {
+  PENDING
+  PROCESSING
+  PAID
+  DELIVERED
+  CANCELED
+}
+
+enum USER_ROLE {
+  ADMIN
+  DEFAULT
 }
