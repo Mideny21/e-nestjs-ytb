@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
-  password  String     @db.VarChar(200)
-  name      String     @db.VarChar(200)
-  address   String     @db.VarChar(200)
-  role      USER_ROLE? @default(DEFAULT)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Order     Order[]
+  id              Int               @id @default(autoincrement())
+  email           String            @unique
+  password        String            @db.VarChar(200)
+  name            String            @db.VarChar(200)
+  address         String            @db.VarChar(200)
+  role            USER_ROLE?        @default(DEFAULT)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Order           Order[]
+  ShippingAddress ShippingAddress[]
 }
 
 model Product {
@@ -37,6 +38,18 @@ model Product {
   updateAt     DateTime       @updatedAt
   ProductImage ProductImage[]
   OrderItem    OrderItem[]
+}
+
+model ShippingAddress {
+  id        Int      @id @default(autoincrement())
+  city      String   @db.VarChar(200)
+  street    String   @db.VarChar(200)
+  zipcode   String   @db.VarChar(200)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Order     Order[]
 }
 
 model ProductImage {
@@ -57,14 +70,16 @@ model Category {
 }
 
 model Order {
-  id         Int          @id @default(autoincrement())
-  userId     Int
-  user       User         @relation(fields: [userId], references: [id])
-  status     ORDER_STATUS @default(PENDING)
-  createdAt  DateTime     @default(now())
-  updateAt   DateTime     @updatedAt
-  totalPrice Float?
-  orderItems OrderItem[]
+  id               Int             @id @default(autoincrement())
+  userId           Int
+  user             User            @relation(fields: [userId], references: [id])
+  status           ORDER_STATUS    @default(PENDING)
+  createdAt        DateTime        @default(now())
+  updateAt         DateTime        @updatedAt
+  totalPrice       Float?
+  shippingAdressId Int
+  shipping         ShippingAddress @relation(fields: [shippingAdressId], references: [id])
+  orderItems       OrderItem[]
 }
 
 model OrderItem {

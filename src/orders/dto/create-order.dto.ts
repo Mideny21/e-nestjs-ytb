@@ -20,6 +20,10 @@ export class CreateOrderDto {
   @IsNotEmpty()
   totalPrice: number;
 
+  @IsNumber()
+  @IsNotEmpty()
+  shippingAdressId: number;
+
   @IsEnum(ORDER_STATUS)
   @IsNotEmpty()
   status: ORDER_STATUS;

@@ -49,6 +49,7 @@ export class OrdersService {
         data: {
           userId: createOrderDto.userId,
           status: createOrderDto.status,
+          shippingAdressId: createOrderDto.shippingAdressId,
           totalPrice: createOrderDto.totalPrice,
           orderItems: {
             create: validOrderItems,
@@ -66,6 +67,7 @@ export class OrdersService {
       where: { userId: id },
       include: {
         orderItems: true,
+        shipping: true,
       },
     });
 

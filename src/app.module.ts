@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { MediaModule } from './media/media.module';
 import { ConfigModule } from '@nestjs/config';
 import { OrdersModule } from './orders/orders.module';
+import { ShippingAdressModule } from './shipping-adress/shipping-adress.module';
 import appConfig from './config/app_config';
 
 @Module({
@@ -21,6 +22,7 @@ import appConfig from './config/app_config';
     MediaModule,
     ConfigModule.forRoot({ isGlobal: true, load: [appConfig] }),
     OrdersModule,
+    ShippingAdressModule,
   ],
   controllers: [AppController],
   providers: [AppService],
