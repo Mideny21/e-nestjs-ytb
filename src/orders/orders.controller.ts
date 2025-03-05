@@ -27,11 +27,11 @@ export class OrdersController {
     return this.ordersService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // @UseGuards(RoleJwtGuard)
-  // update(@Body() updateOrderDto: UpdateOrderDto) {
-  //   return this.ordersService.updateOrder(updateOrderDto);
-  // }
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  update(@Body() updateOrderDto: UpdateOrderDto) {
+    return this.ordersService.updateOrder(updateOrderDto);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

@@ -21,4 +21,8 @@ export class OrderItemDto {
   @IsString()
   @IsNotEmpty()
   total: string;
+
+  @IsString()
+  @IsNotEmpty()
+  image: string;
 }

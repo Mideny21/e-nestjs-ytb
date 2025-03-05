@@ -75,7 +75,9 @@ export class UpdateOrderProvider {
               await tx.product.update({
                 where: { id: orderItem.productId },
                 data: {
-                  stock: orderItem.product.stock + orderItem.quantity,
+                  stock: (
+                    parseInt(orderItem.product.stock, 10) + orderItem.quantity
+                  ).toString(),
                 },
               });
             }

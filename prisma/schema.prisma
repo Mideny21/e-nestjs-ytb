@@ -90,6 +90,7 @@ model OrderItem {
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
   name      String
+  image     String?
   price     String?
   total     String?
   order     Order    @relation(fields: [orderId], references: [id])
