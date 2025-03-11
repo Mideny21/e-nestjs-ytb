@@ -97,6 +97,17 @@ model OrderItem {
   product   Product  @relation(fields: [productId], references: [id])
 }
 
+model Task {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String?
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+  createdAt   DateTime     @default(now())
+  updateAt    DateTime     @updatedAt
+}
+
 enum ORDER_STATUS {
   PENDING
   PROCESSING
@@ -108,4 +119,16 @@ enum ORDER_STATUS {
 enum USER_ROLE {
   ADMIN
   DEFAULT
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
 }

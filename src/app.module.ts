@@ -10,6 +10,7 @@ import { MediaModule } from './media/media.module';
 import { ConfigModule } from '@nestjs/config';
 import { OrdersModule } from './orders/orders.module';
 import { ShippingAdressModule } from './shipping-adress/shipping-adress.module';
+import { TaskModule } from './task/task.module';
 import appConfig from './config/app_config';
 
 @Module({
@@ -23,6 +24,7 @@ import appConfig from './config/app_config';
     ConfigModule.forRoot({ isGlobal: true, load: [appConfig] }),
     OrdersModule,
     ShippingAdressModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
