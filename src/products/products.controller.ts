@@ -8,12 +8,14 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileTypeValidationPipe } from './utils/file-validator';
+import { GetProductDto } from './dto/get-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -32,8 +34,9 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(  @Query() productQuery: GetProductDto) {
+    console.log(productQuery)
+    return this.productsService.findAll(productQuery);
   }
 
   @Get(':id')

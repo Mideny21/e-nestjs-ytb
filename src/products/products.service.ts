@@ -4,12 +4,16 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { MediaService } from '../media/media.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { Product } from '@prisma/client';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { GetProductDto } from './dto/get-product.dto';
+import { Paginated } from 'src/common/pagination/interfaces/paginated.interfaces';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly mediaService: MediaService,
     private readonly prisma: PrismaService,
+    private readonly paginationProvider: PaginationProvider
   ) {}
   async create(
     createProductDto: CreateProductDto,
@@ -40,13 +44,23 @@ export class ProductsService {
     return product;
   }
 
-  public async findAll(): Promise<Product[]> {
-    const products = await this.prisma.product.findMany({
-      include: { ProductImage: { select: { url: true } } },
-    });
-    if (!products) {
-      throw new HttpException('No available product', HttpStatus.NOT_FOUND);
-    }
+  public async findAll(productsQuery:GetProductDto) {
+
+  let products =  await this.paginationProvider.paginateQuery(
+      { limit: productsQuery.limit, page: productsQuery.page },
+      this.prisma.product,
+      {
+      
+        include: { ProductImage: { select: { url: true } } } // Include relations
+      }
+    );
+    
+    // const products = await this.prisma.product.findMany({
+    //   include: { ProductImage: { select: { url: true } } },
+    // });
+    // if (!products) {
+    //   throw new HttpException('No available product', HttpStatus.NOT_FOUND);
+    // }
     return products;
   }
   public async findAllByCategory(categoryId: number): Promise<Product[]> {

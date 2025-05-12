@@ -11,7 +11,9 @@ import { ConfigModule } from '@nestjs/config';
 import { OrdersModule } from './orders/orders.module';
 import { ShippingAdressModule } from './shipping-adress/shipping-adress.module';
 import { TaskModule } from './task/task.module';
+
 import appConfig from './config/app_config';
+import { PaginationModule } from './common/pagination/pagination.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import appConfig from './config/app_config';
     OrdersModule,
     ShippingAdressModule,
     TaskModule,
+    PaginationModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
