@@ -4,4 +4,4 @@
   exports.startDate = date.toString();
   exports.endDate = date.toString();
 }}
-GET  http://localhost:3000/api/products/?limit=2&page=1
+GET  http://localhost:3000/api/products/?limit=10&page=1

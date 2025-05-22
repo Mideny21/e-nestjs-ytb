@@ -14,6 +14,10 @@ import { TaskModule } from './task/task.module';
 
 import appConfig from './config/app_config';
 import { PaginationModule } from './common/pagination/pagination.module';
+import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
+import { ResponseInterceptor } from './common/interceptors/data-response';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+
 
 @Module({
   imports: [
@@ -31,6 +35,15 @@ import { PaginationModule } from './common/pagination/pagination.module';
 
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
