@@ -55,23 +55,23 @@ export class ProductsService {
       }
     );
     
-    // const products = await this.prisma.product.findMany({
-    //   include: { ProductImage: { select: { url: true } } },
-    // });
-    // if (!products) {
-    //   throw new HttpException('No available product', HttpStatus.NOT_FOUND);
-    // }
+
     return products;
   }
-  public async findAllByCategory(categoryId: number): Promise<Product[]> {
-    const products = await this.prisma.product.findMany({
-      where: { categoryId },
-      include: { ProductImage: { select: { url: true } } },
-    });
-    if (!products) {
-      throw new HttpException('No Product Not Found!', HttpStatus.NOT_FOUND);
-    }
-    return products;
+  public async findAllByCategory(categoryId: number, productsQuery:GetProductDto) {
+
+    let productsByCategory =  await this.paginationProvider.paginateQuery(
+      {  limit: productsQuery.limit, page: productsQuery.page },
+      this.prisma.product,
+      {
+        where: { categoryId },
+        include: { ProductImage: { select: { url: true } } } // Include relations
+      }
+    );
+
+    return productsByCategory;
+    
+
   }
 
   async findOne(id: number): Promise<Product> {

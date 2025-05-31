@@ -45,8 +45,8 @@ export class ProductsController {
   }
 
   @Get('category/:id')
-  findByCategory(@Param('id') id: string) {
-    return this.productsService.findAllByCategory(+id);
+  findByCategory(@Param('id') id: string,  @Query() productQuery: GetProductDto) {
+    return this.productsService.findAllByCategory(+id, productQuery);
   }
 
   @Patch(':id')
