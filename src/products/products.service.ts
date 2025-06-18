@@ -3,10 +3,11 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { MediaService } from '../media/media.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 import { GetProductDto } from './dto/get-product.dto';
 import { Paginated } from 'src/common/pagination/interfaces/paginated.interfaces';
+import { FilterProductDto, GetFilteredProductDto } from './dto/fiilter_product_dto';
 
 @Injectable()
 export class ProductsService {
@@ -14,7 +15,7 @@ export class ProductsService {
     private readonly mediaService: MediaService,
     private readonly prisma: PrismaService,
     private readonly paginationProvider: PaginationProvider
-  ) {}
+  ) { }
   async create(
     createProductDto: CreateProductDto,
     files: Express.Multer.File[],
@@ -44,24 +45,77 @@ export class ProductsService {
     return product;
   }
 
-  public async findAll(productsQuery:GetProductDto) {
+  public async findAll(productsQuery: GetProductDto) {
 
-  let products =  await this.paginationProvider.paginateQuery(
+    let products = await this.paginationProvider.paginateQuery(
       { limit: productsQuery.limit, page: productsQuery.page },
       this.prisma.product,
       {
-      
+
         include: { ProductImage: { select: { url: true } } } // Include relations
       }
     );
-    
+
 
     return products;
   }
-  public async findAllByCategory(categoryId: number, productsQuery:GetProductDto) {
 
-    let productsByCategory =  await this.paginationProvider.paginateQuery(
-      {  limit: productsQuery.limit, page: productsQuery.page },
+  async getFilteredProducts(filterDto: GetFilteredProductDto) {
+    const {
+      search,
+      categoryId,
+      minPrice,
+      maxPrice,
+      sort,
+      limit,
+      page
+
+    } = filterDto;
+
+    const where: Prisma.ProductWhereInput = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, } },
+        { description: { contains: search, } },
+      ];
+    }
+
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
+    if (minPrice || maxPrice) {
+      where.price = {
+        ...(minPrice && { gte: minPrice }),
+        ...(maxPrice && { lte: maxPrice }),
+      };
+    }
+
+
+    let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };
+
+    if (sort === 'priceLowToHigh') orderBy = { price: 'asc' };
+    else if (sort === 'priceHighToLow') orderBy = { price: 'desc' };
+
+    return this.paginationProvider.paginateQuery(
+      { limit, page },
+      this.prisma.product,
+      {
+        where,
+        orderBy,
+        include: {
+          ProductImage: { select: { url: true } },
+          category: true,
+        },
+      }
+    );
+  }
+
+  public async findAllByCategory(categoryId: number, productsQuery: GetProductDto) {
+
+    let productsByCategory = await this.paginationProvider.paginateQuery(
+      { limit: productsQuery.limit, page: productsQuery.page },
       this.prisma.product,
       {
         where: { categoryId },
@@ -70,7 +124,7 @@ export class ProductsService {
     );
 
     return productsByCategory;
-    
+
 
   }
 

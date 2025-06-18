@@ -16,10 +16,12 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileTypeValidationPipe } from './utils/file-validator';
 import { GetProductDto } from './dto/get-product.dto';
+import { filter } from 'rxjs';
+import { FilterProductDto, GetFilteredProductDto } from './dto/fiilter_product_dto';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Post()
   @UseInterceptors(
@@ -34,10 +36,19 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(  @Query() productQuery: GetProductDto) {
+  findAll(@Query() productQuery: GetProductDto) {
     console.log(productQuery)
     return this.productsService.findAll(productQuery);
   }
+
+
+  @Get('search')
+  search(@Query() filterDto: GetFilteredProductDto) {
+    console.log(filterDto)
+
+    return this.productsService.getFilteredProducts(filterDto);
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -45,7 +56,7 @@ export class ProductsController {
   }
 
   @Get('category/:id')
-  findByCategory(@Param('id') id: string,  @Query() productQuery: GetProductDto) {
+  findByCategory(@Param('id') id: string, @Query() productQuery: GetProductDto) {
     return this.productsService.findAllByCategory(+id, productQuery);
   }
 
