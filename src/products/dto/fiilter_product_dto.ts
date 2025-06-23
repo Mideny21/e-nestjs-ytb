@@ -5,7 +5,7 @@ import { PaginationQueryDto } from "src/common/pagination/dtos/pagination-query-
 export class FilterProductDto {
     @IsOptional()
     @IsString()
-    search?: string;
+    keyword?: string;
 
     @IsOptional()
     @IsInt()

@@ -62,7 +62,7 @@ export class ProductsService {
 
   async getFilteredProducts(filterDto: GetFilteredProductDto) {
     const {
-      search,
+      keyword,
       categoryId,
       minPrice,
       maxPrice,
@@ -74,10 +74,10 @@ export class ProductsService {
 
     const where: Prisma.ProductWhereInput = {};
 
-    if (search) {
+    if (keyword) {
       where.OR = [
-        { name: { contains: search, } },
-        { description: { contains: search, } },
+        { name: { contains: keyword, } },
+        { description: { contains: keyword, } },
       ];
     }
 
