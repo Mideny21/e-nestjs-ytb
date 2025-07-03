@@ -30,7 +30,7 @@ model Product {
   id           Int            @id @default(autoincrement())
   name         String
   price        String         @db.VarChar(100)
-  description  String
+  description  String         @db.LongText()
   stock        String         @db.VarChar(200)
   categoryId   Int
   category     Category       @relation(fields: [categoryId], references: [id])
