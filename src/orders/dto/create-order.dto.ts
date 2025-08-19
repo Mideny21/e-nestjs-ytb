@@ -6,6 +6,7 @@ import {
   ValidateNested,
   IsOptional,
   IsNumber,
+  IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ORDER_STATUS } from '@prisma/client';
@@ -33,4 +34,9 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => OrderItemDto)
   orderItems: OrderItemDto[];
+
+
+  @IsString()
+  @IsNotEmpty()
+  deviceToken: string;
 }

@@ -4,13 +4,15 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Order } from '@prisma/client';
 import { UpdateOrderProvider } from './providers/update-order.provider';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private prisma: PrismaService,
     private readonly updateorder: UpdateOrderProvider,
-  ) {}
+    private readonly notificationService: NotificationService
+  ) { }
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
     const order = await this.prisma.$transaction(async (tx) => {
       //initialize an array to store order items with sufficient stock
@@ -58,6 +60,22 @@ export class OrdersService {
       });
       return createdOrder;
     });
+
+    try {
+      const fcmResponse = await this.notificationService.sendNotification(
+        createOrderDto.deviceToken,
+        'Order Placed 🎉',
+        'Your order has been placed successfully! [SERVER]',
+        { orderId: order.id.toString() },
+      );
+
+      // Log the successful response
+      console.log('FCM notification sent successfully:', fcmResponse);
+    } catch (error) {
+      // Log the error but don't block order creation
+      console.error('Failed to send FCM notification:', error);
+    }
+
 
     return order;
   }

@@ -17,6 +17,7 @@ import { PaginationModule } from './common/pagination/pagination.module';
 import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptors/data-response';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { NotificationModule } from './notification/notification.module';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     ShippingAdressModule,
     TaskModule,
     PaginationModule,
+    NotificationModule,
 
   ],
   controllers: [AppController],
